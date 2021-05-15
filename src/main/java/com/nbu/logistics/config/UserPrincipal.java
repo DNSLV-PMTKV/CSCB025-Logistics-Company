@@ -1,11 +1,13 @@
 package com.nbu.logistics.config;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.nbu.logistics.entity.User;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserPrincipal implements UserDetails {
@@ -19,8 +21,14 @@ public class UserPrincipal implements UserDetails {
 	public UserPrincipal(User user) {
 		this.user = user;
 
-		String[] userRoles = new String[0];
-		this.authorities = AuthorityUtils.createAuthorityList(userRoles);
+		List<GrantedAuthority> authorities = user.getRoles().stream()
+				.map(role -> new SimpleGrantedAuthority(role.getName().name())).collect(Collectors.toList());
+		this.authorities = authorities;
+	}
+
+	public UserPrincipal(User user, Collection<GrantedAuthority> authorities) {
+		this.user = user;
+		this.authorities = authorities;
 	}
 
 	public long getUserId() {
@@ -68,6 +76,10 @@ public class UserPrincipal implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	public List<String> getRolesAsString() {
+		return user.getRoles().stream().map(role -> role.getName().name()).collect(Collectors.toList());
 	}
 
 }

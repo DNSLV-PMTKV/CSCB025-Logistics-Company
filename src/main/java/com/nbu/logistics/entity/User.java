@@ -1,10 +1,13 @@
 package com.nbu.logistics.entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -22,6 +25,9 @@ public class User extends BaseEntity {
 
 	@Column
 	private String password;
+
+	@ManyToMany
+	private List<UserRole> roles;
 
 	public Long getId() {
 		return id;
@@ -53,6 +59,14 @@ public class User extends BaseEntity {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public List<UserRole> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<UserRole> roles) {
+		this.roles = roles;
 	}
 
 }

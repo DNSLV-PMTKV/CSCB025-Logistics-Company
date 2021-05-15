@@ -1,13 +1,18 @@
 package com.nbu.logistics.service;
 
+import java.util.Arrays;
+
 import com.nbu.logistics.config.UserPrincipal;
 import com.nbu.logistics.config.jwt.JwtUtils;
 import com.nbu.logistics.dto.JwtDto;
 import com.nbu.logistics.dto.SigninDto;
 import com.nbu.logistics.dto.SignupDto;
 import com.nbu.logistics.entity.User;
+import com.nbu.logistics.entity.UserRole;
+import com.nbu.logistics.enums.Role;
 import com.nbu.logistics.exceptions.InvalidInputException;
 import com.nbu.logistics.repository.UserRepository;
+import com.nbu.logistics.repository.UserRoleRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +28,8 @@ import org.springframework.stereotype.Service;
 public class UserService implements UserDetailsService {
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private UserRoleRepository userRoleRepository;
 
 	@Autowired
 	PasswordEncoder encoder;
@@ -41,7 +48,7 @@ public class UserService implements UserDetailsService {
 		return new UserPrincipal(user);
 	}
 
-	public void registerUser(SignupDto signUpRequest) {
+	public void registerClientUser(SignupDto signUpRequest) {
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			throw new InvalidInputException("Username is already taken!");
 		}
@@ -51,6 +58,10 @@ public class UserService implements UserDetailsService {
 		}
 
 		User user = new User();
+
+		UserRole role = userRoleRepository.findByName(Role.ROLE_CLIENT).orElse(null);
+
+		user.setRoles(Arrays.asList(role));
 		user.setUsername(signUpRequest.getUsername());
 		user.setEmail(signUpRequest.getEmail());
 		user.setPassword(encoder.encode(signUpRequest.getPassword()));
@@ -67,6 +78,7 @@ public class UserService implements UserDetailsService {
 
 		UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
 
-		return new JwtDto(jwt, userDetails.getUserId(), userDetails.getUsername(), userDetails.getEmail());
+		return new JwtDto(jwt, userDetails.getUserId(), userDetails.getUsername(), userDetails.getEmail(),
+				userDetails.getRolesAsString());
 	}
 }

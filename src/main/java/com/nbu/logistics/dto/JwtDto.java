@@ -1,17 +1,21 @@
 package com.nbu.logistics.dto;
 
+import java.util.List;
+
 public class JwtDto {
 	private String token;
 	private String type = "Bearer";
 	private Long id;
 	private String username;
 	private String email;
+	private List<String> roles;
 
-	public JwtDto(String accessToken, Long id, String username, String email) {
+	public JwtDto(String accessToken, Long id, String username, String email, List<String> roles) {
 		this.token = accessToken;
 		this.id = id;
 		this.username = username;
 		this.email = email;
+		this.roles = roles;
 	}
 
 	public String getAccessToken() {
@@ -52,6 +56,14 @@ public class JwtDto {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public List<String> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<String> roles) {
+		this.roles = roles;
 	}
 
 }
