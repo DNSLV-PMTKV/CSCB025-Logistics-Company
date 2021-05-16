@@ -8,6 +8,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Collections;
+
 @Configuration
 public class CorsConfig {
 	@Bean
@@ -18,7 +20,7 @@ public class CorsConfig {
 		config.setAllowCredentials(true);
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
-		config.addAllowedOrigin("*");
+		config.setAllowedOriginPatterns(Collections.singletonList("*"));
 		source.registerCorsConfiguration("/**", config);
 		FilterRegistrationBean<?> bean = new FilterRegistrationBean(new CorsFilter(source));
 		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
