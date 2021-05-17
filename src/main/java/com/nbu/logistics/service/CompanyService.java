@@ -1,7 +1,10 @@
 package com.nbu.logistics.service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import com.nbu.logistics.dto.CompanyDetailsDto;
 import com.nbu.logistics.entity.Company;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class CompanyService {
 	@Autowired
 	private CompanyRepository repository;
@@ -46,6 +50,10 @@ public class CompanyService {
 		existing.get().setName(update.getName());
 		existing.get().setUpdatedTs(Instant.now());
 		return ObjectConverter.convertObject(repository.save(existing.get()), CompanyDetailsDto.class);
+	}
+
+	public List<CompanyDetailsDto> listCompanies() {
+		return ObjectConverter.convertList(repository.findAll(), CompanyDetailsDto.class);
 	}
 
 }

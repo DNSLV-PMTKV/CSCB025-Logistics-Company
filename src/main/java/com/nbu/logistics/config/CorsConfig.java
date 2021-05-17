@@ -1,5 +1,7 @@
 package com.nbu.logistics.config;
 
+import java.util.Collections;
+
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +20,7 @@ public class CorsConfig {
 		config.setAllowCredentials(true);
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
-		config.addAllowedOrigin("*");
+		config.setAllowedOriginPatterns(Collections.singletonList("*"));
 		source.registerCorsConfiguration("/**", config);
 		FilterRegistrationBean<?> bean = new FilterRegistrationBean(new CorsFilter(source));
 		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);

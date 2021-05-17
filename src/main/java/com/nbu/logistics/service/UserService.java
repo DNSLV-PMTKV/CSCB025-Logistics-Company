@@ -2,6 +2,8 @@ package com.nbu.logistics.service;
 
 import java.util.Arrays;
 
+import javax.transaction.Transactional;
+
 import com.nbu.logistics.config.UserPrincipal;
 import com.nbu.logistics.config.jwt.JwtUtils;
 import com.nbu.logistics.dto.JwtDto;
@@ -25,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class UserService implements UserDetailsService {
 	@Autowired
 	private UserRepository userRepository;
