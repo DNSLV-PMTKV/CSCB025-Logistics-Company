@@ -7,7 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -25,6 +27,10 @@ public class User extends BaseEntity {
 
 	@Column
 	private String password;
+
+	@ManyToOne
+	@JoinColumn(name = "office_id")
+	private Office office;
 
 	@ManyToMany
 	private List<UserRole> roles;
@@ -59,6 +65,14 @@ public class User extends BaseEntity {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public Office getOffice() {
+		return office;
+	}
+
+	public void setOffice(Office office) {
+		this.office = office;
 	}
 
 	public List<UserRole> getRoles() {
