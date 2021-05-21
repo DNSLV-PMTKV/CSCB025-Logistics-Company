@@ -2,10 +2,12 @@ package com.nbu.logistics.controller;
 
 import com.nbu.logistics.dto.SignupUserDto;
 import com.nbu.logistics.dto.UserDto;
-import com.nbu.logistics.service.EmployeeService;
+import com.nbu.logistics.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/employee")
-public class EmployeeController {
+@RequestMapping("/api/user")
+public class UserController {
 
 	@Autowired
-	private EmployeeService service;
+	private UserService service;
 
 	@PostMapping
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -27,9 +29,18 @@ public class EmployeeController {
 	}
 
 	@PutMapping("/{id}")
-	// @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_COURIER', 'ROLE_OFFICE')")
-	public UserDto updateEmployee(@RequestBody UserDto userDto, @PathVariable Long id) {
+	public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable Long id) {
 		return service.updateUser(userDto, id);
+	}
+
+	@GetMapping("/{id}")
+	public UserDto getUser(@PathVariable Long id) {
+		return service.getUser(id);
+	}
+
+	@DeleteMapping("/{id}")
+	public void deleteUser(@PathVariable Long id) {
+		service.deleteUser(id);
 	}
 
 }

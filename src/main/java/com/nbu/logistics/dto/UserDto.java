@@ -1,7 +1,9 @@
 package com.nbu.logistics.dto;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.nbu.logistics.entity.UserRole;
 import com.nbu.logistics.enums.Role;
 
 public class UserDto extends BaseDto {

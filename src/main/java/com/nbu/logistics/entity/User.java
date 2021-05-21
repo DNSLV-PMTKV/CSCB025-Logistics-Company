@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -33,6 +34,7 @@ public class User extends BaseEntity {
 	private Office office;
 
 	@ManyToMany
+	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "roles_id", referencedColumnName = "id"))
 	private List<UserRole> roles;
 
 	public Long getId() {
@@ -81,6 +83,11 @@ public class User extends BaseEntity {
 
 	public void setRoles(List<UserRole> roles) {
 		this.roles = roles;
+	}
+
+	public void updateRoles(List<UserRole> roles) {
+		this.roles.removeAll(this.roles);
+		this.roles.addAll(roles);
 	}
 
 }
