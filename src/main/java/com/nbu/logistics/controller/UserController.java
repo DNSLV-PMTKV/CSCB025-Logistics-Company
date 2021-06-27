@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -31,6 +33,11 @@ public class UserController {
 	@PutMapping("/{id}")
 	public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable Long id) {
 		return service.updateUser(userDto, id);
+	}
+
+	@GetMapping
+	public List<UserDto> getUsers() {
+		return service.getUsers();
 	}
 
 	@GetMapping("/{id}")
