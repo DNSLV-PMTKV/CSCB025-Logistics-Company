@@ -3,25 +3,16 @@ package com.nbu.logistics.dto;
 import com.nbu.logistics.entity.User;
 
 public class ShipmentDto extends BaseDto {
-    private User sender;
-    private String receiver;
+    private String target;
     private String address;
     private double weight;
 
-    public User getSender() {
-        return sender;
+    public String getTarget() {
+        return target;
     }
 
-    public void setSender(User sender) {
-        this.sender = sender;
-    }
-
-    public String getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
+    public void setTarget(String target) {
+        this.target = target;
     }
 
     public String getAddress() {

@@ -1,5 +1,14 @@
 package com.nbu.logistics.service;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
+
 import com.nbu.logistics.config.UserPrincipal;
 import com.nbu.logistics.config.jwt.JwtUtils;
 import com.nbu.logistics.dto.*;
@@ -177,21 +186,31 @@ public class UserService implements UserDetailsService {
         return result;
     }
 
-    public List<UserDto> getUsers() {
-        List<UserDto> usersAsDto = new ArrayList<>();
-        List<User> users = new ArrayList<>();
-        users = userRepository.findAll().stream().collect(Collectors.toList());
-        for (int i = 0; i < users.size(); i++) {
-            User existing = users.get(i);
-            UserDto u = ObjectConverter.convertObject(existing, UserDto.class);
-            u.setRoles(existing.getRoles().stream().map(role -> role.getName()).collect(Collectors.toList()));
-            usersAsDto.add(u);
-        }
-        return usersAsDto;
-    }
+	public List<UserDto> getUsers() {
+		ArrayList<UserDto> usersAsDto = new ArrayList<>();
+		List<User> users = new ArrayList<>();
+		users=userRepository.findAll().stream().collect(Collectors.toList());
+		for (int i = 0; i < users.size(); i++) {
+			User existing = users.get(i);
+			UserDto u = ObjectConverter.convertObject(existing, UserDto.class);
+			u.setRoles(existing.getRoles().stream().map(role -> role.getName()).collect(Collectors.toList()));
+			usersAsDto.add(u);
+		}
+		return usersAsDto;
+	}
 
     public UserDto getUser(Long id) {
         Optional<User> existing = userRepository.findById(id);
+        if (!existing.isPresent()) {
+            throw new DoesNotExistsException("User does not exist.");
+        }
+        UserDto u = ObjectConverter.convertObject(existing.get(), UserDto.class);
+        u.setRoles(existing.get().getRoles().stream().map(role -> role.getName()).collect(Collectors.toList()));
+        return u;
+    }
+
+    public UserDto getUserByUsername(String username) {
+        Optional<User> existing = userRepository.findByUsername(username);
         if (!existing.isPresent()) {
             throw new DoesNotExistsException("User does not exist.");
         }
