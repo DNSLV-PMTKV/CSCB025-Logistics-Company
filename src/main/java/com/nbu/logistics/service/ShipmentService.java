@@ -1,7 +1,6 @@
 package com.nbu.logistics.service;
 
 import com.nbu.logistics.dto.ShipmentDto;
-import com.nbu.logistics.dto.UserDto;
 import com.nbu.logistics.entity.Shipment;
 import com.nbu.logistics.entity.User;
 import com.nbu.logistics.exceptions.DoesNotExistsException;
@@ -49,7 +48,7 @@ public class ShipmentService {
     public ShipmentDto getShipment(Long id) {
         Optional<Shipment> existing = shipmentRepository.findById(id);
 
-        if (!existing.isPresent()) {
+        if (existing.isEmpty()) {
             throw new DoesNotExistsException("Shipment does not exist.");
         }
         return ObjectConverter.convertObject(existing.get(), ShipmentDto.class);
@@ -58,7 +57,7 @@ public class ShipmentService {
     public ShipmentDto updateShipment(Long id, ShipmentDto shipmentDto) {
         Optional<Shipment> existing = shipmentRepository.findById(id);
 
-        if (!existing.isPresent()) {
+        if (existing.isEmpty()) {
             throw new DoesNotExistsException("Shipment does not exist");
         }
 
@@ -73,10 +72,20 @@ public class ShipmentService {
     public void deleteShipment(Long id) {
         Optional<Shipment> existing = shipmentRepository.findById(id);
 
-        if (!existing.isPresent()) {
+        if (existing.isEmpty()) {
             throw new DoesNotExistsException("Shipment does not exist.");
         }
 
         shipmentRepository.delete(existing.get());
+    }
+
+    public void registerShipment(Long id) {
+        Optional<Shipment> existing = shipmentRepository.findById(id);
+
+        if (existing.isEmpty()) {
+            throw new DoesNotExistsException("Shipment does not exist.");
+        }
+
+        existing.get().setRegisteredStatus(true);
     }
 }
