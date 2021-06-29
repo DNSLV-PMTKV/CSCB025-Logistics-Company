@@ -1,10 +1,10 @@
 package com.nbu.logistics.controller;
 
-import com.nbu.logistics.dto.CreateShipmentDto;
+import com.nbu.logistics.dto.OfficeDto;
 import com.nbu.logistics.dto.ShipmentDto;
+import com.nbu.logistics.dto.UserDto;
 import com.nbu.logistics.service.ShipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,8 +16,7 @@ public class ShipmentController {
     ShipmentService service;
 
     @PostMapping
-    public ShipmentDto createShipment(@RequestBody CreateShipmentDto shipmentDto) {
-        System.out.println("from controller");
+    public ShipmentDto createShipment(@RequestBody ShipmentDto shipmentDto) {
         return service.createOnlineShipment(shipmentDto);
     }
 
@@ -39,10 +38,5 @@ public class ShipmentController {
     @DeleteMapping("/{id}")
     public void deleteShipment(@PathVariable Long id) {
         service.deleteShipment(id);
-    }
-
-    @PatchMapping("/register/{id}")
-    public void registerShipment(@PathVariable Long id) {
-        service.registerShipment(id);
     }
 }
