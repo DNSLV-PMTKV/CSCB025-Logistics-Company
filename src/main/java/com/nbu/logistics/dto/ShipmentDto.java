@@ -1,17 +1,33 @@
 package com.nbu.logistics.dto;
 
-import com.nbu.logistics.entity.User;
-
 public class ShipmentDto extends BaseDto {
-    private String target;
+    private Long id;
+    private UserDto sender;
+    private UserDto target;
     private String address;
     private double weight;
 
-    public String getTarget() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public UserDto getSender() {
+        return sender;
+    }
+
+    public void setSender(UserDto sender) {
+        this.sender = sender;
+    }
+
+    public UserDto getTarget() {
         return target;
     }
 
-    public void setTarget(String target) {
+    public void setTarget(UserDto target) {
         this.target = target;
     }
 

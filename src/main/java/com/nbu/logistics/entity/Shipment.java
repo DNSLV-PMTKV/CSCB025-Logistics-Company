@@ -17,7 +17,7 @@ public class Shipment extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "receiver_id")
-    private User receiver;
+    private User target;
 
     @Column(name = "address", nullable = false)
     private String address;
@@ -48,12 +48,12 @@ public class Shipment extends BaseEntity {
         this.sender = sender;
     }
 
-    public User getReceiver() {
-        return receiver;
+    public User getTarget() {
+        return target;
     }
 
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
+    public void setTarget(User target) {
+        this.target = target;
     }
 
     public String getAddress() {
