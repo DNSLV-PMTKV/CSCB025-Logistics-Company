@@ -34,8 +34,8 @@ public class ShipmentService {
 
     public ShipmentDto createOnlineShipment(ShipmentDto shipmentDto) {
         Shipment shipment = ObjectConverter.convertObject(shipmentDto, Shipment.class);
-        User receiver = userRepository.findByUsername(shipmentDto.getTarget()).get();
-        shipment.setReceiver(receiver);
+        User target = userRepository.findByUsername(shipmentDto.getTarget().getUsername()).get();
+        shipment.setTarget(target);
         shipment.setSender(userRepository.findByUsername(AuthenticationUtils.getAuthenticatedUsername()).get());
         shipmentRepository.save(shipment);
 
