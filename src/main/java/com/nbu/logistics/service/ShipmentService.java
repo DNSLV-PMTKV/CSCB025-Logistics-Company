@@ -1,5 +1,6 @@
 package com.nbu.logistics.service;
 
+import com.nbu.logistics.dto.CreateShipmentDto;
 import com.nbu.logistics.dto.ShipmentDto;
 import com.nbu.logistics.entity.Shipment;
 import com.nbu.logistics.entity.User;
@@ -31,9 +32,9 @@ public class ShipmentService {
         return ObjectConverter.convertObject(shipment, ShipmentDto.class);
     }
 
-    public ShipmentDto createOnlineShipment(ShipmentDto shipmentDto) {
+    public ShipmentDto createOnlineShipment(CreateShipmentDto shipmentDto) {
         Shipment shipment = ObjectConverter.convertObject(shipmentDto, Shipment.class);
-        User target = userRepository.findByUsername(shipmentDto.getTarget().getUsername()).get();
+        User target = userRepository.findByUsername(shipmentDto.getTarget()).get();
         shipment.setTarget(target);
         shipment.setSender(userRepository.findByUsername(AuthenticationUtils.getAuthenticatedUsername()).get());
         shipmentRepository.save(shipment);

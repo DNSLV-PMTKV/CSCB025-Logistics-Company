@@ -26,7 +26,7 @@ public class Shipment extends BaseEntity {
     private double weight;
 
     @ManyToOne
-    @JoinColumn(name = "employee_id", nullable = false)
+    @JoinColumn(name = "employee_id")
     private User employee;
 
     @Column(name = "registered_status", nullable = false)

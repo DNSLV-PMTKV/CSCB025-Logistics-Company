@@ -1,5 +1,6 @@
 package com.nbu.logistics.controller;
 
+import com.nbu.logistics.dto.CreateShipmentDto;
 import com.nbu.logistics.dto.ShipmentDto;
 import com.nbu.logistics.service.ShipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,8 @@ public class ShipmentController {
     ShipmentService service;
 
     @PostMapping
-    public ShipmentDto createShipment(@RequestBody ShipmentDto shipmentDto) {
+    public ShipmentDto createShipment(@RequestBody CreateShipmentDto shipmentDto) {
+        System.out.println("from controller");
         return service.createOnlineShipment(shipmentDto);
     }
 
@@ -40,7 +42,6 @@ public class ShipmentController {
     }
 
     @PatchMapping("/register/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')" + "&& hasRole('ROLE_OFFICE')")
     public void registerShipment(@PathVariable Long id) {
         service.registerShipment(id);
     }
