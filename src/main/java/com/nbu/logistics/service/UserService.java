@@ -152,11 +152,12 @@ public class UserService implements UserDetailsService {
 			throw new PermissionDeniedException("You don't have permission to edit.");
 		}
 
-		if (userRepository.existsByUsername(userDto.getUsername())) {
+		if (!userDto.getUsername().equals(existingUser.getUsername())
+				&& userRepository.existsByUsername(userDto.getUsername())) {
 			throw new InvalidInputException("Username is already taken!");
 		}
 
-		if (userRepository.existsByEmail(userDto.getEmail())) {
+		if (!userDto.getEmail().equals(existingUser.getEmail()) && userRepository.existsByEmail(userDto.getEmail())) {
 			throw new InvalidInputException("Email is already in use!");
 		}
 
