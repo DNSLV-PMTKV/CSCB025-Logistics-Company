@@ -6,6 +6,9 @@ public class ShipmentDto extends BaseDto {
     private UserDto target;
     private String address;
     private double weight;
+    private UserDto employee;
+    private boolean registeredStatus;
+    private boolean deliveredStatus;
 
     public Long getId() {
         return id;
@@ -45,5 +48,29 @@ public class ShipmentDto extends BaseDto {
 
     public void setWeight(double weight) {
         this.weight = weight;
+    }
+
+    public UserDto getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(UserDto employee) {
+        this.employee = employee;
+    }
+
+    public boolean isRegisteredStatus() {
+        return registeredStatus;
+    }
+
+    public void setRegisteredStatus(boolean registeredStatus) {
+        this.registeredStatus = registeredStatus;
+    }
+
+    public boolean isDeliveredStatus() {
+        return deliveredStatus;
+    }
+
+    public void setDeliveredStatus(boolean deliveredStatus) {
+        this.deliveredStatus = deliveredStatus;
     }
 }

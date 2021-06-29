@@ -25,10 +25,15 @@ public class Shipment extends BaseEntity {
     @Column(name = "weight", nullable = false)
     private double weight;
 
-//    @Column(name = "employee", nullable = false)
-//    private User deskGuy;
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private User employee;
 
-    @Column(name ="delivered", nullable = false)
+    @Column(name = "registered_status", nullable = false)
+    @ColumnDefault("false")
+    private boolean registeredStatus;
+
+    @Column(name = "delivered", nullable = false)
     @ColumnDefault("false")
     private boolean deliveredStatus;
 
@@ -70,6 +75,22 @@ public class Shipment extends BaseEntity {
 
     public void setWeight(double weight) {
         this.weight = weight;
+    }
+
+    public User getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(User employee) {
+        this.employee = employee;
+    }
+
+    public boolean isRegisteredStatus() {
+        return registeredStatus;
+    }
+
+    public void setRegisteredStatus(boolean registeredStatus) {
+        this.registeredStatus = registeredStatus;
     }
 
     public boolean isDeliveredStatus() {
