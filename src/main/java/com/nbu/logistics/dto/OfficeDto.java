@@ -10,7 +10,7 @@ public class OfficeDto extends BaseDto {
 	}
 
 	public OfficeDto(Long id, String city, String address, CompanyDetailsDto company) {
-		this.id = id;
+		this.id = id;	
 		this.city = city;
 		this.address = address;
 		this.company = company;
