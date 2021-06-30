@@ -21,102 +21,124 @@ import java.util.Optional;
 @Service
 @Transactional
 public class ShipmentService {
-    @Autowired
-    private ShipmentRepository shipmentRepository;
+	@Autowired
+	private ShipmentRepository shipmentRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    public ShipmentDto createShipment(ShipmentDto shipmentDto) {
-        Shipment shipment = ObjectConverter.convertObject(shipmentDto, Shipment.class);
-        shipmentRepository.save(ObjectConverter.convertObject(shipmentDto, Shipment.class));
-        return ObjectConverter.convertObject(shipment, ShipmentDto.class);
-    }
+	public ShipmentDto createShipment(ShipmentDto shipmentDto) {
+		Shipment shipment = ObjectConverter.convertObject(shipmentDto, Shipment.class);
+		shipmentRepository.save(ObjectConverter.convertObject(shipmentDto, Shipment.class));
+		return ObjectConverter.convertObject(shipment, ShipmentDto.class);
+	}
 
-    public ShipmentDto createOnlineShipment(CreateShipmentDto shipmentDto) {
-        if (shipmentDto.getTarget().equals(AuthenticationUtils.getAuthenticatedUsername())) {
-            throw new InvalidInputException("Sender and receiver cannot be the same person.");
-        }
-        Shipment shipment = ObjectConverter.convertObject(shipmentDto, Shipment.class);
-        User target = userRepository.findByUsername(shipmentDto.getTarget()).get();
-        shipment.setTarget(target);
-        shipment.setSender(userRepository.findByUsername(AuthenticationUtils.getAuthenticatedUsername()).get());
-        shipmentRepository.save(shipment);
+	public ShipmentDto createOnlineShipment(CreateShipmentDto shipmentDto) {
+		if (shipmentDto.getTarget().equals(AuthenticationUtils.getAuthenticatedUsername())) {
+			throw new InvalidInputException("Sender and receiver cannot be the same person.");
+		}
+		Shipment shipment = ObjectConverter.convertObject(shipmentDto, Shipment.class);
+		Optional<User> target = userRepository.findByUsername(shipmentDto.getTarget());
 
-        return ObjectConverter.convertObject(shipment, ShipmentDto.class);
-    }
+		if (!target.isPresent()) {
+			throw new InvalidInputException("Receiver not found.");
+		}
 
-    public List<ShipmentDto> listOfShipments() {
-        return ObjectConverter.convertList(shipmentRepository.findAll(), ShipmentDto.class);
-    }
+		shipment.setTarget(target.get());
+		shipment.setSender(userRepository.findByUsername(AuthenticationUtils.getAuthenticatedUsername()).get());
+		shipment.setPrice(calculateShipmentPrice(shipment.getWeight(), shipment.getToOffice()));
+		shipmentRepository.save(shipment);
 
-    public ShipmentDto getShipment(Long id) {
-        Optional<Shipment> existing = shipmentRepository.findById(id);
+		return ObjectConverter.convertObject(shipment, ShipmentDto.class);
+	}
 
-        if (existing.isEmpty()) {
-            throw new DoesNotExistsException("Shipment does not exist.");
-        }
-        return ObjectConverter.convertObject(existing.get(), ShipmentDto.class);
-    }
+	public List<ShipmentDto> listOfShipments() {
+		return ObjectConverter.convertList(shipmentRepository.findAll(), ShipmentDto.class);
+	}
 
-    public ShipmentDto updateShipment(Long id, ShipmentDto shipmentDto) {
-        Optional<Shipment> existing = shipmentRepository.findById(id);
+	public ShipmentDto getShipment(Long id) {
+		Optional<Shipment> existing = shipmentRepository.findById(id);
 
-        if (existing.isEmpty()) {
-            throw new DoesNotExistsException("Shipment does not exist");
-        }
+		if (existing.isEmpty()) {
+			throw new DoesNotExistsException("Shipment does not exist.");
+		}
+		return ObjectConverter.convertObject(existing.get(), ShipmentDto.class);
+	}
 
-        //TODO UPDATE
-        existing.get().setAddress(shipmentDto.getAddress());
-        existing.get().setWeight(shipmentDto.getWeight());
-        existing.get().setUpdatedTs(Instant.now());
+	public ShipmentDto updateShipment(Long id, ShipmentDto shipmentDto) {
+		Optional<Shipment> existing = shipmentRepository.findById(id);
 
-        return ObjectConverter.convertObject(existing.get(), ShipmentDto.class);
-    }
+		if (existing.isEmpty()) {
+			throw new DoesNotExistsException("Shipment does not exist");
+		}
 
-    public void deleteShipment(Long id) {
-        Optional<Shipment> existing = shipmentRepository.findById(id);
+		// TODO UPDATE
+		existing.get().setAddress(shipmentDto.getAddress());
+		existing.get().setWeight(shipmentDto.getWeight());
+		existing.get().setUpdatedTs(Instant.now());
 
-        if (existing.isEmpty()) {
-            throw new DoesNotExistsException("Shipment does not exist.");
-        }
+		return ObjectConverter.convertObject(existing.get(), ShipmentDto.class);
+	}
 
-        shipmentRepository.delete(existing.get());
-    }
+	public void deleteShipment(Long id) {
+		Optional<Shipment> existing = shipmentRepository.findById(id);
 
-    public void registerShipment(Long id) {
-        Optional<Shipment> existing = shipmentRepository.findById(id);
+		if (existing.isEmpty()) {
+			throw new DoesNotExistsException("Shipment does not exist.");
+		}
 
-        if (existing.isEmpty()) {
-            throw new DoesNotExistsException("Shipment does not exist.");
-        }
+		shipmentRepository.delete(existing.get());
+	}
 
-        existing.get().setEmployee(userRepository.findByUsername(AuthenticationUtils.getAuthenticatedUsername()).get());
+	public void registerShipment(Long id) {
+		Optional<Shipment> existing = shipmentRepository.findById(id);
 
-        existing.get().setRegisteredStatus(true);
-    }
+		if (existing.isEmpty()) {
+			throw new DoesNotExistsException("Shipment does not exist.");
+		}
 
-    public List<ShipmentDto> getListOfRegisteredShipments() {
-        return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrue(), ShipmentDto.class);
-    }
+		existing.get().setEmployee(userRepository.findByUsername(AuthenticationUtils.getAuthenticatedUsername()).get());
 
-    public List<ShipmentDto> getListOfRegisteredShipmentsByUser(String username) {
-        User employee = userRepository.findByUsername(username).get();
-        System.out.println(employee.getUsername());
-        return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndEmployee(employee), ShipmentDto.class);
-    }
+		existing.get().setRegisteredStatus(true);
+	}
 
-    public List<ShipmentDto> getListOfRegisteredShipmentsNotDelivered() {
-        return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndDeliveredStatusFalse(), ShipmentDto.class);
-    }
+	public List<ShipmentDto> getListOfRegisteredShipments() {
+		return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrue(), ShipmentDto.class);
+	}
 
-    public List<ShipmentDto> getListOfRegisteredShipmentsBySender(String username) {
-        User sender = userRepository.findByUsername(username).get();
-        return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndSender(sender), ShipmentDto.class);
-    }
+	public List<ShipmentDto> getListOfRegisteredShipmentsByUser(String username) {
+		User employee = userRepository.findByUsername(username).get();
+		System.out.println(employee.getUsername());
+		return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndEmployee(employee),
+				ShipmentDto.class);
+	}
 
-    public List<ShipmentDto> getListOfRegisteredShipmentsByReceiver(String username) {
-        User receiver = userRepository.findByUsername(username).get();
-        return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndTarget(receiver), ShipmentDto.class);
-    }
+	public List<ShipmentDto> getListOfRegisteredShipmentsNotDelivered() {
+		return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndDeliveredStatusFalse(),
+				ShipmentDto.class);
+	}
+
+	public List<ShipmentDto> getListOfRegisteredShipmentsBySender(String username) {
+		User sender = userRepository.findByUsername(username).get();
+		return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndSender(sender),
+				ShipmentDto.class);
+	}
+
+	public List<ShipmentDto> getListOfRegisteredShipmentsByReceiver(String username) {
+		User receiver = userRepository.findByUsername(username).get();
+		return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndTarget(receiver),
+				ShipmentDto.class);
+	}
+
+	private Double calculateShipmentPrice(Double weight, Boolean toOffice) {
+		Double basePrice = 5.0;
+		Double weightPrice = weight / 3; // For every 3 {insert any weight type here} add 1 {insert currency here}
+		if (weight >= 5) {
+			basePrice = basePrice + weightPrice;
+		}
+		if (toOffice) {
+			basePrice = basePrice + 10;
+		}
+		return basePrice;
+	}
 }

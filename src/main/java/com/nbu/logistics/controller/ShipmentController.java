@@ -12,38 +12,38 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/shipment")
 public class ShipmentController {
-    @Autowired
-    ShipmentService service;
+	@Autowired
+	ShipmentService service;
 
-    @PostMapping
-    public ShipmentDto createShipment(@RequestBody CreateShipmentDto shipmentDto) {
-        System.out.println("from controller");
-        return service.createOnlineShipment(shipmentDto);
-    }
+	@PostMapping
+	public ShipmentDto createShipment(@RequestBody CreateShipmentDto shipmentDto) {
+		System.out.println("from controller");
+		return service.createOnlineShipment(shipmentDto);
+	}
 
-    @GetMapping
-    public List<ShipmentDto> listShipments() {
-        return service.listOfShipments();
-    }
+	@GetMapping
+	public List<ShipmentDto> listShipments() {
+		return service.listOfShipments();
+	}
 
-    @GetMapping("/{id}")
-    public ShipmentDto getShipment(@PathVariable Long id) {
-        return service.getShipment(id);
-    }
+	@GetMapping("/{id}")
+	public ShipmentDto getShipment(@PathVariable Long id) {
+		return service.getShipment(id);
+	}
 
-    @PutMapping("/{id}")
-    public ShipmentDto updateShipment(@PathVariable Long id, @RequestBody ShipmentDto shipmentDto) {
-        return service.updateShipment(id, shipmentDto);
-    }
+	@PutMapping("/{id}")
+	public ShipmentDto updateShipment(@PathVariable Long id, @RequestBody ShipmentDto shipmentDto) {
+		return service.updateShipment(id, shipmentDto);
+	}
 
-    @DeleteMapping("/{id}")
-    public void deleteShipment(@PathVariable Long id) {
-        service.deleteShipment(id);
-    }
+	@DeleteMapping("/{id}")
+	public void deleteShipment(@PathVariable Long id) {
+		service.deleteShipment(id);
+	}
 
-    @PatchMapping("/register/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_OFFICE')")
-    public void registerShipment(@PathVariable Long id) {
-        service.registerShipment(id);
-    }
+	@PatchMapping("/register/{id}")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_OFFICE')")
+	public void registerShipment(@PathVariable Long id) {
+		service.registerShipment(id);
+	}
 }
