@@ -5,6 +5,7 @@ import com.nbu.logistics.dto.ShipmentDto;
 import com.nbu.logistics.entity.Shipment;
 import com.nbu.logistics.entity.User;
 import com.nbu.logistics.exceptions.DoesNotExistsException;
+import com.nbu.logistics.exceptions.InvalidInputException;
 import com.nbu.logistics.repository.ShipmentRepository;
 import com.nbu.logistics.repository.UserRepository;
 import com.nbu.logistics.tools.AuthenticationUtils;
@@ -33,6 +34,9 @@ public class ShipmentService {
     }
 
     public ShipmentDto createOnlineShipment(CreateShipmentDto shipmentDto) {
+        if (shipmentDto.getTarget().equals(AuthenticationUtils.getAuthenticatedUsername())) {
+            throw new InvalidInputException("Sender and receiver cannot be the same person.");
+        }
         Shipment shipment = ObjectConverter.convertObject(shipmentDto, Shipment.class);
         User target = userRepository.findByUsername(shipmentDto.getTarget()).get();
         shipment.setTarget(target);
