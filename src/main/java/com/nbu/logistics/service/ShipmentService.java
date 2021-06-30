@@ -87,6 +87,32 @@ public class ShipmentService {
             throw new DoesNotExistsException("Shipment does not exist.");
         }
 
+        existing.get().setEmployee(userRepository.findByUsername(AuthenticationUtils.getAuthenticatedUsername()).get());
+
         existing.get().setRegisteredStatus(true);
+    }
+
+    public List<ShipmentDto> getListOfRegisteredShipments() {
+        return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrue(), ShipmentDto.class);
+    }
+
+    public List<ShipmentDto> getListOfRegisteredShipmentsByUser(String username) {
+        User employee = userRepository.findByUsername(username).get();
+        System.out.println(employee.getUsername());
+        return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndEmployee(employee), ShipmentDto.class);
+    }
+
+    public List<ShipmentDto> getListOfRegisteredShipmentsNotDelivered() {
+        return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndDeliveredStatusFalse(), ShipmentDto.class);
+    }
+
+    public List<ShipmentDto> getListOfRegisteredShipmentsBySender(String username) {
+        User sender = userRepository.findByUsername(username).get();
+        return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndSender(sender), ShipmentDto.class);
+    }
+
+    public List<ShipmentDto> getListOfRegisteredShipmentsByReceiver(String username) {
+        User receiver = userRepository.findByUsername(username).get();
+        return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndTarget(receiver), ShipmentDto.class);
     }
 }

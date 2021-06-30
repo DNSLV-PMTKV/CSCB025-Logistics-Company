@@ -31,7 +31,7 @@ public class ShipmentController {
         return service.getShipment(id);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ShipmentDto updateShipment(@PathVariable Long id, @RequestBody ShipmentDto shipmentDto) {
         return service.updateShipment(id, shipmentDto);
     }
@@ -42,6 +42,7 @@ public class ShipmentController {
     }
 
     @PatchMapping("/register/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_OFFICE')")
     public void registerShipment(@PathVariable Long id) {
         service.registerShipment(id);
     }
