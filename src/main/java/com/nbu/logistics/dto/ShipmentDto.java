@@ -3,6 +3,7 @@ package com.nbu.logistics.dto;
 import com.nbu.logistics.entity.User;
 
 public class ShipmentDto extends BaseDto {
+    private Long id;
     private UserDto sender;
     private UserDto target;
     private String address;
@@ -10,6 +11,14 @@ public class ShipmentDto extends BaseDto {
     private UserDto employee;
     private boolean registeredStatus;
     private boolean deliveredStatus;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public UserDto getSender() {
         return sender;
