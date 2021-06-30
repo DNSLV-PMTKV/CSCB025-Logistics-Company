@@ -14,6 +14,7 @@ import com.nbu.logistics.exceptions.DoesNotExistsException;
 import com.nbu.logistics.exceptions.InvalidInputException;
 import com.nbu.logistics.repository.CompanyRepository;
 import com.nbu.logistics.repository.OfficeRepository;
+import com.nbu.logistics.repository.UserRepository;
 import com.nbu.logistics.tools.ObjectConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class OfficeService {
 
 	@Autowired
 	private OfficeRepository repository;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	@Autowired
 	private CompanyRepository companyRepository;
@@ -56,6 +60,7 @@ public class OfficeService {
 		if (!existing.isPresent()) {
 			throw new DoesNotExistsException("Office does not exist.");
 		}
+		userRepository.deleteAllByOfficeId(id);
 		repository.delete(existing.get());
 	}
 
