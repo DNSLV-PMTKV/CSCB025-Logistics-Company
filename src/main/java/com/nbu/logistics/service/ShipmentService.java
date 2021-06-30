@@ -1,6 +1,8 @@
 package com.nbu.logistics.service;
 
 import com.nbu.logistics.dto.CreateShipmentDto;
+import com.nbu.logistics.dto.IncomeDto;
+import com.nbu.logistics.dto.IncomeFromToDto;
 import com.nbu.logistics.dto.ShipmentDto;
 import com.nbu.logistics.entity.Shipment;
 import com.nbu.logistics.entity.User;
@@ -17,6 +19,7 @@ import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -140,5 +143,17 @@ public class ShipmentService {
 			basePrice = basePrice + 10;
 		}
 		return basePrice;
+	}
+
+	public IncomeDto getIncome(IncomeFromToDto dto) {
+		List<Shipment> shipments = shipmentRepository
+				.findAllByCreatedTsGreaterThanAndCreatedTsLessThan(dto.getFromDate(), dto.getToDate());
+		IncomeDto result = new IncomeDto();
+		double price = 0.0;
+		for (Shipment shipment : shipments) {
+			price = price + shipment.getPrice();
+		}
+		result.setIncome(price);
+		return result;
 	}
 }
