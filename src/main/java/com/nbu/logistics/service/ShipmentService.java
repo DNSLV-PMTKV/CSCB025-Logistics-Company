@@ -8,6 +8,7 @@ import com.nbu.logistics.entity.Shipment;
 import com.nbu.logistics.entity.User;
 import com.nbu.logistics.exceptions.DoesNotExistsException;
 import com.nbu.logistics.exceptions.InvalidInputException;
+import com.nbu.logistics.exceptions.PermissionDeniedException;
 import com.nbu.logistics.repository.ShipmentRepository;
 import com.nbu.logistics.repository.UserRepository;
 import com.nbu.logistics.tools.AuthenticationUtils;
@@ -111,7 +112,6 @@ public class ShipmentService {
 
 	public List<ShipmentDto> getListOfRegisteredShipmentsByUser(String username) {
 		User employee = userRepository.findByUsername(username).get();
-		System.out.println(employee.getUsername());
 		return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndEmployee(employee),
 				ShipmentDto.class);
 	}
@@ -122,12 +122,16 @@ public class ShipmentService {
 	}
 
 	public List<ShipmentDto> getListOfRegisteredShipmentsBySender(String username) {
+		User authenticated = userRepository.findByUsername(AuthenticationUtils.getAuthenticatedUsername()).get();
+		checkUserRoles(authenticated, username);
 		User sender = userRepository.findByUsername(username).get();
 		return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndSender(sender),
 				ShipmentDto.class);
 	}
 
 	public List<ShipmentDto> getListOfRegisteredShipmentsByReceiver(String username) {
+		User authenticated = userRepository.findByUsername(AuthenticationUtils.getAuthenticatedUsername()).get();
+		checkUserRoles(authenticated, username);
 		User receiver = userRepository.findByUsername(username).get();
 		return ObjectConverter.convertList(shipmentRepository.findByRegisteredStatusTrueAndTarget(receiver),
 				ShipmentDto.class);
@@ -155,5 +159,14 @@ public class ShipmentService {
 		}
 		result.setIncome(price);
 		return result;
+	}
+
+	private void checkUserRoles(User authenticated, String username) {
+
+		User requested = userRepository.findByUsername(username).get();
+
+		if (!authenticated.getId().equals(requested.getId()) && !authenticated.getUsername().equals("admin")) {
+			throw new PermissionDeniedException("You don't have permission to view other users data.");
+		}
 	}
 }
